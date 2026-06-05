@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>動画で紹介した入力内容 | はじめてのAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #faf8f5;
+      --surface:   #ffffff;
+      --border:    #e8e2d9;
+      --accent:    #c0392b;
+      --accent-lt: #fdf0ef;
+      --text-main: #2c2825;
+      --text-sub:  #7a726a;
+      --text-code: #3d2f2a;
+      --radius:    12px;
+      --shadow:    0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 24px 22px;
+      text-align: center;
+    }
+    .channel-label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    header h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-main);
+    }
+    header p {
+      margin-top: 10px;
+      font-size: 13.5px;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+    .header-note {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 16px 0;
+    }
+
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-sub);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin: 36px 0 16px;
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.11); }
+
+    .card-header {
+      padding: 16px 18px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .card-num {
+      min-width: 26px;
+      height: 26px;
+      background: var(--accent-lt);
+      color: var(--accent);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+    .card-desc {
+      padding: 8px 18px 0 54px;
+      font-size: 12.5px;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+
+    .prompt-wrap {
+      position: relative;
+      margin: 12px 14px 14px;
+    }
+    .prompt-text {
+      width: 100%;
+      background: #faf7f4;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px 42px;
+      font-size: 13.5px;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text-code);
+      line-height: 1.75;
+      resize: none;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 80px;
+      cursor: text;
+    }
+    .prompt-text:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+    .copy-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+    }
+    .copy-btn:hover  { background: #a93226; }
+    .copy-btn:active { transform: scale(0.96); }
+    .copy-btn.copied { background: #27ae60; }
+    .copy-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+    footer {
+      text-align: center;
+      margin-top: 56px;
+      padding: 0 16px;
+      font-size: 12px;
+      color: var(--text-sub);
+      line-height: 1.9;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px auto 24px;
+      max-width: 200px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="channel-label">はじめてのAI</div>
+  <h1>動画で紹介した<br>入力内容まとめ</h1>
+  <p>「コピー」ボタンを押すだけで使えます。</p>
+  <span class="header-note">登録などはありません。</span>
+</header>
+
+<main>
+
+  <div class="section-title">カスタム指示 ── 個人情報の入力ガード</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div class="card-title">個人情報を入力しようとしたとき、送信前に教えてもらう</div>
+    </div>
+    <div class="card-desc">「カスタム指示」の「ChatGPTへの指示」欄に貼り付けて使います。個人情報を入力しようとしたとき、送信前に一言知らせてくれるようになります。</div>
+    <div class="prompt-wrap">
+      <textarea class="prompt-text" readonly>私が個人情報（名前、住所、電話番号、生年月日、健康情報、パスワード、口座番号、クレジットカード番号など）や、他の人の個人情報を入力しようとしている場合は、送信前に一言教えてください。また、上記以外でも、入力しないほうがよいと判断した情報があれば、同様に指摘してください。ただし、会話の邪魔にならないよう、該当する場合だけ短く指摘してください。</textarea>
+      <button class="copy-btn" onclick="copyPrompt(this)">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        コピー
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <hr class="divider" />
+  <a href="https://www.youtube.com/@First_AI_guide" target="_blank" rel="noopener">▶ YouTubeチャンネルに戻る</a><br><br>
+  © はじめてのAI
+</footer>
+
+<script>
+  document.querySelectorAll('.prompt-text').forEach(el => {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  });
+
+  function copyPrompt(btn) {
+    const textarea = btn.closest('.prompt-wrap').querySelector('.prompt-text');
+    const text = textarea.value.trim();
+
+    navigator.clipboard.writeText(text).then(() => {
+      btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.5"><polyline points="20 6 9 17 4 12"/></svg>コピーしました！`;
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>コピー`;
+        btn.classList.remove('copied');
+      }, 2500);
+    }).catch(() => {
+      textarea.removeAttribute('readonly');
+      textarea.select();
+      document.execCommand('copy');
+      textarea.setAttribute('readonly', '');
+      btn.textContent = 'コピーしました！';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 2500);
+    });
+  }
+</script>
+</body>
+</html>
